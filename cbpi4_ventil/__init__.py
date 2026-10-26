@@ -51,8 +51,10 @@ def fremde_gpio_aktoren(cbpi, gpio, eigene_id):
 
 
 @parameters([
-    Property.Select("GPIO Ventil", options=GPIOS, description="Ausgang zum Ventilrelais (BCM), bisher 19"),
-    Property.Select("GPIO Durchfluss", options=GPIOS, description="Impulse des Durchflussmessers (BCM), bisher 24"),
+    Property.Select("GPIO Ventil", options=GPIOS, description="Ausgang zum Ventil (BCM). HAT mit Ventilausgängen: 9 (J20, V5); "
+                    "alter HAT ohne Ventilausgänge: 19 (Relais J13)"),
+    Property.Select("GPIO Durchfluss", options=GPIOS, description="Impulse des Durchflussmessers (BCM). HAT mit J19: 6; "
+                    "alter HAT ohne Buchse: 24"),
     Property.Select("Ventil offen bei", options=["HIGH", "LOW"], description="Pegel, bei dem das Relais anzieht"),
     Property.Number("Impulse pro Liter", configurable=True, default_value=387,
                     description="YF-S201: 387 (alter Faktor 6,45 x 60); mit Messbecher einmessen"),
@@ -75,8 +77,8 @@ class VentilDosierer(CBPiActor):
 
     def init_regler(self):
         p = self.props
-        self.gpio_ventil = int(p.get("GPIO Ventil", 19) or 19)
-        self.gpio_fluss = int(p.get("GPIO Durchfluss", 24) or 24)
+        self.gpio_ventil = int(p.get("GPIO Ventil", 9) or 9)
+        self.gpio_fluss = int(p.get("GPIO Durchfluss", 6) or 6)
         ipl = _zahl(p, "Impulse pro Liter", 387)
         g = Grenzen(
             max_liter=_zahl(p, "Max Liter", 40), hand_max_s=_zahl(p, "Hand max Sekunden", 120),

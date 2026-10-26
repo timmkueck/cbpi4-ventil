@@ -1,7 +1,9 @@
 # CLAUDE.md – cbpi4-ventil
 
 Gilt zusätzlich zur übergeordneten `~/Claude/CLAUDE.md`. CraftBeerPi4-Plugin, das Brauwasser in den Kessel
-dosiert: Magnetventil (NC) am HAT-Ausgang J13 (GPIO 19), Durchflussmesser YF-S201 an GPIO 24 (keine HAT-Buchse).
+dosiert: Magnetventil (NC) und Durchflussmesser YF-S201. HAT mit Ventilausgängen (Biersteuerung `ventile-druck`, Stand
+f5a2bcf): Ventil 5 an J20 = **GPIO 9**, YF-S201 an J19 = **GPIO 6** (Vorgaben im Plugin). Alter HAT: Relais J13 = GPIO 19,
+YF-S201 an GPIO 24 ohne Buchse. GPIO 9 ist ein SPI-Pin, SPI bleibt aus.
 Ersetzt die Flask-App `app.py` im Repo `Ventilsteuerung` (Zweig `main`, dort Port 5000). Teil des **Brau-Verbunds** von Timm. Gesamtbild in `docs/systeme.md` der Repos `Biersteuerung` und
 `BrewPiLess-PCB` (gleiche Datei). Nachbar-Repos liegen lokal nebeneinander unter `~/Claude/`:
 `cbpi4-brausicher`, `cbpi4-gaerdruck`, `cbpi4-ventil`, `cbpi4-simulation`, `cbpi4-bme280`, `Biersteuerung` (HAT,
@@ -23,7 +25,7 @@ Braubrücke, Plugin `cbpi4-kellersensor`).
 - Jeder Weg, der das Ventil öffnet, braucht eine Mengen- **und** eine Zeitgrenze. Keine stille Attrappe bei
   fehlender Hardware (deshalb lgpio und ein klarer Fehler statt RPi.GPIO).
 - Regelung gehört in `regler.py`, nicht in die asyncio-Schleife von cbpi.
-- Kein zweiter Aktor im cbpi darf GPIO 19 schalten (`SicherAktor` aus `cbpi4-brausicher` prüft das mit).
+- Kein zweiter Aktor im cbpi darf den Ventil-GPIO schalten (`SicherAktor` aus `cbpi4-brausicher` prüft das mit).
 - Zweig `main`. Tests: `pip install cbpi4 pytest && python -m pytest tests/ -q`.
 - UI-Texte mit Umlauten, Code-Kommentare ohne.
 

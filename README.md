@@ -47,13 +47,25 @@ Dagegen hilft nur Hardware: ein **stromlos geschlossenes** Ventil (NC) und, wenn
 
 ## Verdrahtung
 
+**HAT „Biersteuerung“ mit Ventilausgängen** (65 × 96 mm, Zweig `ventile-druck` im Repo Biersteuerung, Stand
+26.10.2026):
+
 | Was | Pi | Bemerkung |
 |---|---|---|
-| Ventilrelais | GPIO 19 (Pin 35) | Auf dem HAT „Biersteuerung“ ist das der Ausgang **J13** (bisher „Kühlschrank“, 12 V über BC337). Zieht bei HIGH an. |
-| Durchflussmesser YF-S201, Signal | GPIO 24 (Pin 18) | Hat auf dem HAT keine Buchse, direkt an die Stiftleiste. |
+| Brauwasser-Ventil (12 V, NC) | **GPIO 9** (Pin 21) | Buchse **J20**, Ventil 5 (Pin 1 +12V, Pin 2 V5), low-side AO3400A, offen bei HIGH. Beim Booten Low = zu. |
+| Durchflussmesser YF-S201 | **GPIO 6** (Pin 31) | Buchse **J19** (1 GND, 2 +5V, 3 Signal), Pull-up und Schmitt-Trigger 74LVC1G17 auf der Platine: Der Pi sieht nie mehr als 3,3 V. |
+
+GPIO 9 ist ein SPI-Pin: **SPI auf dem Pi nicht aktivieren** (`dtparam=spi` aus lassen).
+
+**Alter HAT ohne Ventilausgänge:**
+
+| Was | Pi | Bemerkung |
+|---|---|---|
+| Ventilrelais | GPIO 19 (Pin 35) | Ausgang **J13** (bisher „Kühlschrank“, 12 V über BC337). Zieht bei HIGH an. |
+| Durchflussmesser YF-S201, Signal | GPIO 24 (Pin 18) | Keine Buchse, direkt an die Stiftleiste. |
 | YF-S201 Versorgung | 5 V (Pin 2), GND (Pin 6) | |
 
-**Achtung, Pegel:** Der YF-S201 an 5 V liefert ein Signal bis 5 V. Die GPIOs des Pi vertragen 3,3 V.
+**Achtung, Pegel (nur alter HAT):** Der YF-S201 an 5 V liefert ein Signal bis 5 V. Die GPIOs des Pi vertragen 3,3 V.
 Das geht oft eine Weile gut, schädigt den Eingang aber auf Dauer. Abhilfe mit einer Diode:
 
 ```
@@ -127,13 +139,14 @@ journalctl -u craftbeerpi | grep cbpi4_ventil
 
 Erwartet: `Plugin cbpi4_ventil loaded successfully`. Dann in der Oberfläche:
 
-- *Hardware → Aktor hinzufügen*: Typ **VentilDosierer**, GPIO Ventil 19, GPIO Durchfluss 24, Ventil offen bei HIGH,
+- *Hardware → Aktor hinzufügen*: Typ **VentilDosierer**, GPIO Ventil 9, GPIO Durchfluss 6 (alter HAT: 19 und 24),
+  Ventil offen bei HIGH,
   Impulse pro Liter 387 (bzw. der Wert aus Schritt 5), Simulation Nein.
 - *Hardware → Sensor hinzufügen*: Typ **VentilDurchfluss**, Ventil = dieser Aktor, Wert = Menge.
 - *Maischplan*: Schritt **WasserDosieren**, Liter = Hauptguss, Ventil = dieser Aktor.
 
-Gibt es einen alten GPIOActor auf GPIO 19 (etwa „Kühlschrank“), vorher löschen. Sonst meldet der
-Ventil-Aktor „GPIO 19/24 wird auch von … benutzt“ und bleibt zu.
+Gibt es einen anderen Aktor auf denselben GPIOs (alter HAT: GPIOActor „Kühlschrank“ auf 19), vorher löschen. Sonst
+meldet der Ventil-Aktor „GPIO … wird auch von … benutzt“ und bleibt zu.
 
 ## Einstellungen des Aktors
 

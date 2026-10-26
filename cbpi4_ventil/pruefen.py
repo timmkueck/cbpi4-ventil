@@ -3,7 +3,8 @@
   python -m cbpi4_ventil.pruefen zaehlen 15     Ventil bleibt zu; 15 s Impulse zaehlen
   python -m cbpi4_ventil.pruefen dosieren 1.0   1 L mit allen Grenzen abmessen (Messbecher!)
 
-Optionen: --ventil 19 --fluss 24 --ipl 387 --low (Relais zieht bei LOW an)
+Optionen: --ventil 9 --fluss 6 --ipl 387 --low (Relais zieht bei LOW an).
+Alter HAT ohne Ventilausgaenge: --ventil 19 --fluss 24
 """
 import argparse
 import logging
@@ -17,8 +18,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m cbpi4_ventil.pruefen")
     ap.add_argument("was", choices=["zaehlen", "dosieren"])
     ap.add_argument("wert", type=float)
-    ap.add_argument("--ventil", type=int, default=19)
-    ap.add_argument("--fluss", type=int, default=24)
+    ap.add_argument("--ventil", type=int, default=9)
+    ap.add_argument("--fluss", type=int, default=6)
     ap.add_argument("--ipl", type=float, default=387)
     ap.add_argument("--low", action="store_true")
     a = ap.parse_args(argv)
